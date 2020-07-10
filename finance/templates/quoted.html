@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Stock Quote
+{% endblock %}
+
+{% block main %}
+<div class="quotes container">
+
+    <div class="row">
+        {% for value in stock_info %}
+        <div class="col-xs-12, col-sm-12, col-md-4"><b>{{value.capitalize()}}</b>: {{stock_info[value]}}</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

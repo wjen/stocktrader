@@ -5,11 +5,12 @@ Get Quote
 {% endblock %}
 
 {% block main %}
-<form action="./quote" method="post">
+<form action="/quote" method="post">
     <div class="form-group">
         <label for="symbol">Stock Symbol:</label>
         <input type="text" id="symbol" name="symbol" class="form-control" placeholder="e.g. FB">
     </div>
     <button type="submit" class='btn btn-primary btn-block'>Look up symbol</button>
 </form>
+
 {% endblock %}
