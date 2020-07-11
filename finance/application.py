@@ -74,7 +74,7 @@ def buy():
             db.execute("UPDATE users SET cash = :cash_remaining WHERE id=:id", cash_remaining=cash_remaining, id=session["user_id"])
             
             # update portfolios table
-            rows = db.execute("SELECT * FROM portfolios WHERE id=:id", id=session["user_id"])
+            rows = db.execute("SELECT * FROM portfolios WHERE id=:id AND symbol=:symbol", id=session["user_id"], symbol=symbol)
             if len(rows) == 0:
                 db.execute("INSERT INTO portfolios (id, symbol, shares) VALUES (:id, :symbol, :shares)", \
                            id=session["user_id"], symbol=symbol, shares=shares_to_buy)

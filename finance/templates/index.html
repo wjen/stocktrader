@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Home Page
+{% endblock %}
+
+{% block main %}
+<table class="table table-striped table-responsive">
+    <tr>
+        <th>Stock Symbol</th>
+        <th>Shares Owned</th>
+        <th>Current Price</th>
+        <th>Total Value</th>
+        <th>Available Cash</th>
+        <th>Total Cash Value</th>
+    </tr>
+    <tr>
+        <td name="symbol"></td>
+        <td name="shares"></td>
+        <td name="price"></td>
+        <td name="total_stock_value"></td>
+        <td name="available_cash"></td>
+        <td name="total_cash_value"></td>
+    </tr>
+</table>
+{% endblock %}
