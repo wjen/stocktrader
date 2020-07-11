@@ -50,8 +50,43 @@ def index():
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
-    """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "GET":
+        return render_template('buy.html')
+    else:
+        symbol = request.form.get('symbol').upper()
+        if not symbol:
+            return apology('You must provide a stock symbol')
+        shares_to_buy = int(request.form.get('shares'))
+        if not shares_to_buy:
+            return apology('You must provide a valid number of shares')
+        quote = lookup(symbol)
+        if quote == None:
+            return apology('Invalid stock symbol')
+        stock_price = float(quote['price'])
+        total_cost = stock_price * shares_to_buy
+        rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
+        cash_available = rows[0]['cash']
+        cash_remaining = cash_available - total_cost
+        if total_cost < cash_available:
+
+            # Everythings OK, 1.update cash 2.update portfolios table 3.update history table
+            # Update cash in users table
+            db.execute("UPDATE users SET cash = :cash_remaining WHERE id=:id", cash_remaining=cash_remaining, id=session["user_id"])
+            
+            # update portfolios table
+            rows = db.execute("SELECT * FROM portfolios WHERE id=:id", id=session["user_id"])
+            if len(rows) == 0:
+                db.execute("INSERT INTO portfolios (id, symbol, shares) VALUES (:id, :symbol, :shares)", \
+                           id=session["user_id"], symbol=symbol, shares=shares_to_buy)
+            else:
+                db.execute("UPDATE portfolios SET shares = shares + :shares", shares=shares_to_buy)
+            
+            # update history table
+            db.execute("INSERT INTO history (id, symbol, shares, price) VALUES \
+                       (:id, :symbol, :shares, :price)", id=session["user_id"], shares=shares_to_buy, price=stock_price, symbol=symbol) 
+            return redirect('/')
+        else:
+            return apology("You have insufficient funds to complete the purchase")
 
 
 @app.route("/history")
