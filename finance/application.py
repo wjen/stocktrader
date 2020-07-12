@@ -43,8 +43,15 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
-    """Show portfolio of stocks"""
-    return apology("TODO")
+    db = SQL("sqlite:///finance.db")
+
+    rows = db.execute("SELECT symbol, shares, cash FROM portfolios JOIN users ON users.id = portfolios.id WHERE users.id=:id", id=session['user_id'])
+    for row in rows:
+        stock_info = lookup(row['symbol'])
+        row['current_price'] = f"{stock_info['price']}"
+        row['total_value'] = f"{float(row['current_price']) * float(row['shares']):,.2f}"
+    rows[0]['cash'] = f"{rows[0]['cash']:,.2f}"
+    return render_template('index.html', rows=rows)
 
 
 @app.route("/buy", methods=["GET", "POST"])
