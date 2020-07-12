@@ -45,13 +45,19 @@ if not os.environ.get("API_KEY"):
 def index():
     db = SQL("sqlite:///finance.db")
 
-    rows = db.execute("SELECT symbol, shares, cash FROM portfolios JOIN users ON users.id = portfolios.id WHERE users.id=:id", id=session['user_id'])
+    rows = db.execute("SELECT symbol, shares FROM portfolios WHERE id=:id", id=session['user_id'])
+    user = db.execute("SELECT * FROM users WHERE id=:id", id=session['user_id'])
     for row in rows:
         stock_info = lookup(row['symbol'])
-        row['current_price'] = f"{stock_info['price']}"
-        row['total_value'] = f"{float(row['current_price']) * float(row['shares']):,.2f}"
-    rows[0]['cash'] = f"{rows[0]['cash']:,.2f}"
-    return render_template('index.html', rows=rows)
+        current_price_float = stock_info['price']
+        row['current_price'] = usd(stock_info['price'])
+        total_price_float = current_price_float * float(row['shares'])
+        row['total_stock_value'] = usd(total_price_float)
+
+    cash = user[0]['cash']
+    total_cash_value = cash + total_price_float
+
+    return render_template('index.html', rows=rows, cash=usd(cash), total_cash_value=usd(total_cash_value))
 
 
 @app.route("/buy", methods=["GET", "POST"])

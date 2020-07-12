@@ -17,14 +17,20 @@ Home Page
         <td name="symbol">{{ row['symbol'] }}</td>
         <td name="shares">{{ row['shares'] }}</td>
         <td name="price">{{ row['current_price'] }}</td>
-        <td name="total_stock_value">{{ row['total_value'] }}</td>
+        <td name="total_stock_value">{{ row['total_stock_value'] }}</td>
     </tr>
     {% endfor %}
     <tr>
         <td>CASH</td>
         <td></td>
         <td></td>
-        <td>{{ rows[0]['cash'] }}</td>
+        <td>{{ cash }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>{{ total_cash_value }}</td>
     </tr>
 </table>
 {% endblock %}
