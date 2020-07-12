@@ -44,18 +44,21 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     db = SQL("sqlite:///finance.db")
-
     rows = db.execute("SELECT symbol, shares FROM portfolios WHERE id=:id", id=session['user_id'])
     user = db.execute("SELECT * FROM users WHERE id=:id", id=session['user_id'])
+    cash = user[0]['cash']
+    total_cash_value = 0
+    if not rows: 
+        return render_template('index.html', cash=usd(cash))
     for row in rows:
         stock_info = lookup(row['symbol'])
         current_price_float = stock_info['price']
         row['current_price'] = usd(stock_info['price'])
         total_price_float = current_price_float * float(row['shares'])
         row['total_stock_value'] = usd(total_price_float)
+        total_cash_value += total_price_float
 
-    cash = user[0]['cash']
-    total_cash_value = cash + total_price_float
+    total_cash_value += cash
 
     return render_template('index.html', rows=rows, cash=usd(cash), total_cash_value=usd(total_cash_value))
 
