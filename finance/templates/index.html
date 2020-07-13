@@ -16,6 +16,7 @@ Home Page
         <thead>
             <tr>
                 <th>Stock Symbol</th>
+                <th>Name</th>
                 <th>Shares Owned</th>
                 <th>Current Price</th>
                 <th>Total Value</th>
@@ -24,6 +25,7 @@ Home Page
         {% for row in rows %}
         <tr>
             <td name="symbol">{{ row['symbol'] }}</td>
+            <td name="symbol">{{ row['stock_name'] }}</td>
             <td name="shares">{{ row['shares'] }}</td>
             <td name="price">{{ row['current_price'] }}</td>
             <td name="total_stock_value">{{ row['total_stock_value'] }}</td>
@@ -33,9 +35,11 @@ Home Page
             <td>CASH</td>
             <td></td>
             <td></td>
+            <td></td>
             <td>{{ cash }}</td>
         </tr>
         <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>

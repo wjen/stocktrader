@@ -49,17 +49,16 @@ def index():
     cash = user[0]['cash']
     total_cash_value = 0
     if not rows: 
-        return render_template('index.html', cash=usd(cash))
+        return render_template('index.html', cash=usd(cash), message=message)
     for row in rows:
         stock_info = lookup(row['symbol'])
         current_price_float = stock_info['price']
+        row['stock_name'] = stock_info['name']
         row['current_price'] = usd(stock_info['price'])
         total_price_float = current_price_float * float(row['shares'])
         row['total_stock_value'] = usd(total_price_float)
         total_cash_value += total_price_float
-
     total_cash_value += cash
-
     return render_template('index.html', rows=rows, cash=usd(cash), total_cash_value=usd(total_cash_value))
 
 
@@ -214,8 +213,19 @@ def register():
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
-    """Sell shares of stock"""
-    return apology("TODO")
+    db = SQL("sqlite:///finance.db")
+
+    if request.method == "GET":
+       return render_template('sell.html')
+    else: 
+        symbol = request.form.get('symbol')
+        if not symbol:
+            return apology('Need to enter a stock symbol')
+        if not symbol:
+            return apolog('Need to enter a number of shares to sell')
+        symbols = db.execute('SELECT symbol FROM portfolios WHERE id=:id', id=session['user_id'])
+        if not symbols in symbols:
+            return apology('stock is not in portfolio')
 
 
 def errorhandler(e):
