@@ -218,14 +218,23 @@ def sell():
     if request.method == "GET":
        return render_template('sell.html')
     else: 
-        symbol = request.form.get('symbol')
+        symbol = request.form.get('symbol').upper()
         if not symbol:
             return apology('Need to enter a stock symbol')
-        if not symbol:
-            return apolog('Need to enter a number of shares to sell')
-        symbols = db.execute('SELECT symbol FROM portfolios WHERE id=:id', id=session['user_id'])
-        if not symbols in symbols:
+        shares_to_sell = request.form.get('shares')
+        if not shares_to_sell:
+            return apology('Need to enter a number of shares to sell')
+        stock_info = db.execute('SELECT * FROM portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
+        print(stock_info)
+        if len(stock_info) == 0:
             return apology('stock is not in portfolio')
+        if int(shares_to_sell) > int(stock_info[0]['shares']):
+            return apology('cannot sell more shares than you own')
+        else:
+            new_total_shares -= shares_to_sell
+            db.execute('UPDATE portfolios SET shares = :new_total_shares WHERE id=:id AND symbol=:symbol', new_total_shares=new_total_shares, \
+                        id=session['user_id'], symbol=symbol)
+            return redirect('/')
 
 
 def errorhandler(e):
