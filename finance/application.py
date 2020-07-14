@@ -352,3 +352,17 @@ def changepw():
         flash('Password Changed')
         return redirect('/')
         
+@app.route('/deposit', methods=["GET", "POST"])
+@login_required
+def deposit():
+    db = SQL("sqlite:///finance.db")
+    if request.method == "GET":
+        return render_template('deposit.html')
+    else:
+        cash_list = db.execute("SELECT cash FROM users WHERE id=:id", id=session['user_id'])
+        add_funds = int(request.form.get('add_funds'))
+        if not add_funds or add_funds <= 0:
+            return apology('Invalid Amount')
+        db.execute('UPDATE users SET cash= cash + :add_funds WHERE id=:id', add_funds=add_funds, id=session['user_id'])
+        flash("Added new funds")
+        return redirect('/')
