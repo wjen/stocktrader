@@ -102,6 +102,9 @@ def buy():
             # update history table
             db.execute("INSERT INTO history (id, symbol, shares, price) VALUES \
                        (:id, :symbol, :shares, :price)", id=session["user_id"], shares=shares_to_buy, price=stock_price, symbol=symbol) 
+            
+            # flash message
+            flash("Shares Bought!")
             return redirect('/')
         else:
             return apology("You have insufficient funds to complete the purchase")
@@ -110,16 +113,30 @@ def buy():
 @app.route("/history")
 @login_required
 def history():
-    """Show history of transactions"""
-    return apology("TODO")
+    db = SQL("sqlite:///finance.db")
+
+    # query database for history table
+    history_list = db.execute('SELECT * FROM history WHERE id=:id', id=session['user_id'])
+    if len(history_list) == 0:
+        message = "No transaction history"
+    else:
+        message = ''
+
+    # lookup name of symbo and add to list
+    for row in history_list:
+        quote = lookup(row['symbol'])
+        if quote == None:
+            return apology('Invalid stock symbol in history')
+        row['name'] = quote['name']
+    return render_template('history.html', history_list = history_list, message=message)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
     db = SQL("sqlite:///finance.db")
+    # Forget any user_id, but maintain flashed message if present
 
-    # Forget any user_id
     session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
@@ -143,6 +160,8 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
+
+        flash('You were successfully logged in')
         # Redirect user to home page
         return redirect("/")
 
@@ -158,6 +177,8 @@ def logout():
     # Forget any user_id
     session.clear()
 
+    # flash message
+    flash('Logged Out')
     # Redirect user to login form
     return redirect("/")
 
@@ -211,6 +232,8 @@ def register():
         # remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
+        # add flash message
+        flash('Registered!')
         #redirect to home page
         return redirect('/')
 
@@ -270,10 +293,10 @@ def sell():
         # update cash in users table
         db.execute('UPDATE users SET cash=cash+:increase WHERE id=:id', increase=increase_cash, id=session['user_id'])
         
+        # add flash message
+        flash('Shares Sold!')
+
         return redirect('/')
-
-       
-
 
 def errorhandler(e):
     """Handle error"""

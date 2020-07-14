@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Transaction History
+{% endblock %}
+
+{% block main %}
+<header>
+    {% if message %}
+    <div class='alert alert-primary text-center'>{{ message }}</div>
+    {% endif %}
+</header>
+
+<main class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Stock Symbol</th>
+                <th>Name</th>
+                <th>Shares Bought/Sold</th>
+                <th>Stock Price At Transaction</th>
+                <th>Time Of Transaction</th>
+            </tr>
+        </thead>
+        {% for row in history_list %}
+        {% if row['shares'] < 0 %}
+        <tr class="table-danger">
+            <td name="symbol" class="danger">{{ row['symbol'] }}</td>
+            <td name="symbol" class="danger">{{ row['name'] }}</td>
+            <td name="shares" class="danger">{{ row['shares'] }}</td>
+            <td name="price" class="danger">{{ row['price'] }}</td>
+            <td name="price" class="danger">{{ row['datetime_text'] }}</td>
+        </tr>
+        {% else %}
+        <tr class="table-success">
+            <td name="symbol" class="success">{{ row['symbol'] }}</td>
+            <td name="symbol" class="success">{{ row['name'] }}</td>
+            <td name="shares" class="success">{{ row['shares'] }}</td>
+            <td name="price" class="success">{{ row['price'] }}</td>
+            <td name="price" class="success">{{ row['datetime_text'] }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</main>
+{% endblock %}
