@@ -75,7 +75,7 @@ def buy():
         if not symbol:
             return apology('You must provide a stock symbol')
         shares_to_buy = int(request.form.get('shares'))
-        if not shares_to_buy:
+        if not shares_to_buy or shares_to_buy =< 0:
             return apology('You must provide a valid number of shares')
         quote = lookup(symbol)
         if quote == None:
@@ -265,8 +265,8 @@ def sell():
         
         # get the number of shares inputted by user
         shares_to_sell = int(request.form.get('shares'))
-        if not shares_to_sell:
-            return apology('Need to enter a number of shares to sell')
+        if not shares_to_sell or shares_to_sell <= 0:
+            return apology('Need to enter valid number of shares')
 
         # check to see if user has the stock in portfolio and enough shares to sell
         shares_already_list = db.execute('SELECT shares FROM portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)

@@ -49,14 +49,6 @@ form
     border-radius: 1em;
 }
 
-main .form-control
-{
-    /* center form controls */
-    /* display: inline-block; */
-
-    /* override Bootstrap's 100% width for form controls */
-    /* width: auto; */
-}
 
 main
 {
@@ -64,7 +56,7 @@ main
     overflow-x: auto;
 
     /* center contents */
-    /* text-align: center; */
+    text-align: center;
 }
 
 main img
@@ -77,9 +69,3 @@ main img
 {
     text-align: center;
 }
-
-/* Table */
-
-tr td:nth-child(4), tr td:nth-child(3)  { /* I don't think they are 0 based */
-    text-align: center;
- }
