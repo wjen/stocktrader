@@ -28,7 +28,7 @@ Transaction History
             <td name="symbol" class="danger">{{ row['symbol'] }}</td>
             <td name="symbol" class="danger">{{ row['name'] }}</td>
             <td name="shares" class="danger">{{ row['shares'] }}</td>
-            <td name="price" class="danger">{{ row['price'] }}</td>
+            <td name="price" class="danger">{{ "%0.2f"|format(row['price']|float) }}</td>
             <td name="price" class="danger">{{ row['datetime_text'] }}</td>
         </tr>
         {% else %}
@@ -36,7 +36,7 @@ Transaction History
             <td name="symbol" class="success">{{ row['symbol'] }}</td>
             <td name="symbol" class="success">{{ row['name'] }}</td>
             <td name="shares" class="success">{{ row['shares'] }}</td>
-            <td name="price" class="success">{{ row['price'] }}</td>
+            <td name="price" class="success">{{ "%0.2f"|format(row['price']|float) }}</td>
             <td name="price" class="success">{{ row['datetime_text'] }}</td>
         </tr>
         {% endif %}

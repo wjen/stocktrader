@@ -80,11 +80,17 @@ def buy():
         quote = lookup(symbol)
         if quote == None:
             return apology('Invalid stock symbol')
-        stock_price = float(quote['price'])
+        stock_price = (quote['price'])
         total_cost = stock_price * shares_to_buy
+
+        # Query database to get the amount of cash user has available
         rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
         cash_available = rows[0]['cash']
+
+        # Get the amount of cash after the transaction
         updated_cash = cash_available - total_cost
+
+        #Make sure there is enough cash to cover the purchase
         if total_cost < cash_available:
 
             # Everythings OK, 1.update cash 2.update portfolios table 3.update history table
@@ -97,7 +103,8 @@ def buy():
                 db.execute("INSERT INTO portfolios (id, symbol, shares) VALUES (:id, :symbol, :shares)", \
                            id=session["user_id"], symbol=symbol, shares=shares_to_buy)
             else:
-                db.execute("UPDATE portfolios SET shares = shares + :shares", shares=shares_to_buy)
+                db.execute("UPDATE portfolios SET shares = shares + :shares WHERE id=:id AND symbol=:symbol", shares=shares_to_buy, \
+                           id=session['user_id'], symbol=symbol)
             
             # update history table
             db.execute("INSERT INTO history (id, symbol, shares, price) VALUES \

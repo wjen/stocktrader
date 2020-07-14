@@ -77,3 +77,9 @@ main img
 {
     text-align: center;
 }
+
+/* Table */
+
+tr td:nth-child(4), tr td:nth-child(3)  { /* I don't think they are 0 based */
+    text-align: center;
+ }
