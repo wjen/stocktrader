@@ -49,6 +49,7 @@ def index():
     cash = user[0]['cash']
     total_cash_value = 0
     if len(rows_list) == 0: 
+        print('len or row list is zero')
         return render_template('index.html', cash=usd(cash))
     for row in rows_list:
         stock_info = lookup(row['symbol'])
@@ -248,10 +249,13 @@ def sell():
         
         updated_shares = shares_already - shares_to_sell
 
+        # get current price of stock
+        price = quote['price']
+
         # update the portfolios table
         # if shares = 0, delete row
         if updated_shares == 0:
-            db.execute('DELETE from users WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
+            db.execute('DELETE from portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
         else:
             db.execute('UPDATE portfolios SET shares = :updated_shares WHERE id=:id AND symbol=:symbol', updated_shares=updated_shares, \
                     id=session['user_id'], symbol=symbol)
@@ -260,16 +264,13 @@ def sell():
         db.execute('INSERT INTO history (id, symbol, shares, price) VALUES (:id, :symbol, :shares, :price)',  \
                     id=session['user_id'], symbol=symbol, shares=-(shares_to_sell), price=price)
         
-        # get current price of stock
-        price = quote['price']
-
         # increase in cash after selling stock
         increase_cash = price * shares_to_sell
 
         # update cash in users table
-        db.execute('UPDATE user SET cash=cash+:increase WHERE id=:id', increase=increase_cash, id=session['user_id'])
+        db.execute('UPDATE users SET cash=cash+:increase WHERE id=:id', increase=increase_cash, id=session['user_id'])
         
-        return render_template('index.html')
+        return redirect('/')
 
        
 
