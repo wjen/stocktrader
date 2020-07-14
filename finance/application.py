@@ -71,6 +71,8 @@ def buy():
     if request.method == "GET":
         return render_template('buy.html')
     else:
+        
+        # Validate user inputs
         symbol = request.form.get('symbol').upper()
         if not symbol:
             return apology('You must provide a stock symbol')
@@ -229,19 +231,19 @@ def register():
         
         rows = db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)", username=username, hash=generate_password_hash(password))
 
-        # query database for username
+        # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username", username=username)
 
-        # make sure username exists and password is correct
+        # Make sure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
             return apology("invalid username and/or password")
 
-        # remember which user has logged in
+        # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
-        # add flash message
+        # Add flash message
         flash('Registered!')
-        #redirect to home page
+        # Redirect to home page
         return redirect('/')
 
 @app.route("/sell", methods=["GET", "POST"])
@@ -256,19 +258,19 @@ def sell():
         if not symbol:
             return apology('Need to enter a stock symbol')
         
-        # use helper function to get quote
+        # Use helper function to get quote
         quote = lookup(symbol)
 
-        # check if lookup failed
+        # Check if lookup failed
         if quote == None:
             return apology("Invalid symbol")
         
-        # get the number of shares inputted by user
+        # Get the number of shares inputted by user
         shares_to_sell = int(request.form.get('shares'))
         if not shares_to_sell or shares_to_sell <= 0:
             return apology('Need to enter valid number of shares')
 
-        # check to see if user has the stock in portfolio and enough shares to sell
+        # Check to see if user has the stock in portfolio and enough shares to sell
         shares_already_list = db.execute('SELECT shares FROM portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
         if len(shares_already_list) == 0:
             return apology('stock is not in portfolio')
@@ -279,28 +281,28 @@ def sell():
         
         updated_shares = shares_already - shares_to_sell
 
-        # get current price of stock
+        # Get current price of stock
         price = quote['price']
 
-        # update the portfolios table
-        # if shares = 0, delete row
+        # Update the portfolios table
+        # If shares = 0, delete row
         if updated_shares == 0:
             db.execute('DELETE from portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
         else:
             db.execute('UPDATE portfolios SET shares = :updated_shares WHERE id=:id AND symbol=:symbol', updated_shares=updated_shares, \
                     id=session['user_id'], symbol=symbol)
         
-        # update the history table
+        # Update the history table
         db.execute('INSERT INTO history (id, symbol, shares, price) VALUES (:id, :symbol, :shares, :price)',  \
                     id=session['user_id'], symbol=symbol, shares=-(shares_to_sell), price=price)
         
-        # increase in cash after selling stock
+        # Increase in cash after selling stock
         increase_cash = price * shares_to_sell
 
-        # update cash in users table
+        # Update cash in users table
         db.execute('UPDATE users SET cash=cash+:increase WHERE id=:id', increase=increase_cash, id=session['user_id'])
         
-        # add flash message
+        # Add flash message
         flash('Shares Sold!')
 
         return redirect('/')
@@ -324,6 +326,8 @@ def changepw():
         return render_template('changepw.html')
     else:
         db = SQL("sqlite:///finance.db")
+
+        # Validate user inputs
         cur_pw = request.form.get('cur_pw')
         new_pw = request.form.get('new_pw')
         confirm_pw = request.form.get('confirm_pw')
@@ -333,14 +337,18 @@ def changepw():
             return apology('You must enter a new password', 403)
         elif not confirm_pw:
             return apology('You must re-enter your password', 403)
-        elif new_pw != confirm_pq:
+        elif new_pw != confirm_pw:
             return apology('Passwords do not match')
-
+        print(new_pw)
         user_list = db.execute("SELECT * FROM users WHERE id=:id", id=session['user_id'])
         
+        # Vheck if the current passwords match
         if not check_password_hash(user_list[0]["hash"], cur_pw):
             return apology("invalid current password", 403)
 
-
-        return render_template('changepw.html')
+        # Query db and update to new password
+        db.execute("UPDATE users SET hash=:hash WHERE id=:id", hash=generate_password_hash(new_pw), id=session['user_id'])
+        
+        flash('Password Changed')
+        return redirect('/')
         
