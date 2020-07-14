@@ -33,7 +33,6 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
 
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
@@ -44,13 +43,14 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     db = SQL("sqlite:///finance.db")
-    rows = db.execute("SELECT symbol, shares FROM portfolios WHERE id=:id", id=session['user_id'])
+
+    rows_list = db.execute("SELECT symbol, shares FROM portfolios WHERE id=:id", id=session['user_id'])
     user = db.execute("SELECT * FROM users WHERE id=:id", id=session['user_id'])
     cash = user[0]['cash']
     total_cash_value = 0
-    if not rows: 
-        return render_template('index.html', cash=usd(cash), message=message)
-    for row in rows:
+    if len(rows_list) == 0: 
+        return render_template('index.html', cash=usd(cash))
+    for row in rows_list:
         stock_info = lookup(row['symbol'])
         current_price_float = stock_info['price']
         row['stock_name'] = stock_info['name']
@@ -59,12 +59,14 @@ def index():
         row['total_stock_value'] = usd(total_price_float)
         total_cash_value += total_price_float
     total_cash_value += cash
-    return render_template('index.html', rows=rows, cash=usd(cash), total_cash_value=usd(total_cash_value))
+    return render_template('index.html', rows=rows_list, cash=usd(cash), total_cash_value=usd(total_cash_value))
 
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
+    db = SQL("sqlite:///finance.db")
+
     if request.method == "GET":
         return render_template('buy.html')
     else:
@@ -81,12 +83,12 @@ def buy():
         total_cost = stock_price * shares_to_buy
         rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
         cash_available = rows[0]['cash']
-        cash_remaining = cash_available - total_cost
+        updated_cash = cash_available - total_cost
         if total_cost < cash_available:
 
             # Everythings OK, 1.update cash 2.update portfolios table 3.update history table
             # Update cash in users table
-            db.execute("UPDATE users SET cash = :cash_remaining WHERE id=:id", cash_remaining=cash_remaining, id=session["user_id"])
+            db.execute("UPDATE users SET cash = :updated_cash WHERE id=:id", updated_cash=updated_cash, id=session["user_id"])
             
             # update portfolios table
             rows = db.execute("SELECT * FROM portfolios WHERE id=:id AND symbol=:symbol", id=session["user_id"], symbol=symbol)
@@ -114,6 +116,7 @@ def history():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
+    db = SQL("sqlite:///finance.db")
 
     # Forget any user_id
     session.clear()
@@ -139,7 +142,6 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
-
         # Redirect user to home page
         return redirect("/")
 
@@ -179,7 +181,8 @@ def quote():
 def register():
     
     session.clear()
-    
+    db = SQL("sqlite:///finance.db")
+
     if request.method == "GET":
         return render_template("register.html")
     else:
@@ -221,20 +224,54 @@ def sell():
         symbol = request.form.get('symbol').upper()
         if not symbol:
             return apology('Need to enter a stock symbol')
-        shares_to_sell = request.form.get('shares')
+        
+        # use helper function to get quote
+        quote = lookup(symbol)
+
+        # check if lookup failed
+        if quote == None:
+            return apology("Invalid symbol")
+        
+        # get the number of shares inputted by user
+        shares_to_sell = int(request.form.get('shares'))
         if not shares_to_sell:
             return apology('Need to enter a number of shares to sell')
-        stock_info = db.execute('SELECT * FROM portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
-        print(stock_info)
-        if len(stock_info) == 0:
+
+        # check to see if user has the stock in portfolio and enough shares to sell
+        shares_already_list = db.execute('SELECT shares FROM portfolios WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
+        if len(shares_already_list) == 0:
             return apology('stock is not in portfolio')
-        if int(shares_to_sell) > int(stock_info[0]['shares']):
+        shares_already = shares_already_list[0]['shares']
+        
+        if shares_to_sell > shares_already:
             return apology('cannot sell more shares than you own')
+        
+        updated_shares = shares_already - shares_to_sell
+
+        # update the portfolios table
+        # if shares = 0, delete row
+        if updated_shares == 0:
+            db.execute('DELETE from users WHERE id=:id AND symbol=:symbol', id=session['user_id'], symbol=symbol)
         else:
-            new_total_shares -= shares_to_sell
-            db.execute('UPDATE portfolios SET shares = :new_total_shares WHERE id=:id AND symbol=:symbol', new_total_shares=new_total_shares, \
-                        id=session['user_id'], symbol=symbol)
-            return redirect('/')
+            db.execute('UPDATE portfolios SET shares = :updated_shares WHERE id=:id AND symbol=:symbol', updated_shares=updated_shares, \
+                    id=session['user_id'], symbol=symbol)
+        
+        # update the history table
+        db.execute('INSERT INTO history (id, symbol, shares, price) VALUES (:id, :symbol, :shares, :price)',  \
+                    id=session['user_id'], symbol=symbol, shares=-(shares_to_sell), price=price)
+        
+        # get current price of stock
+        price = quote['price']
+
+        # increase in cash after selling stock
+        increase_cash = price * shares_to_sell
+
+        # update cash in users table
+        db.execute('UPDATE user SET cash=cash+:increase WHERE id=:id', increase=increase_cash, id=session['user_id'])
+        
+        return render_template('index.html')
+
+       
 
 
 def errorhandler(e):
