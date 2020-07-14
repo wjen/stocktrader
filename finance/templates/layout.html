@@ -42,7 +42,18 @@
                 <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
             </ul>
             <ul class="navbar-nav ml-auto mt-2">
-                <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        My Account
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a href="./changepw" class="dropdown-item">Change Password</a>
+                        <a href="./changepw" class="dropdown-item">Deposit</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="./logout" class="dropdown-item">Log Out</a>
+                    </div>
+                </li>
             </ul>
             {% else %}
             <ul class="navbar-nav ml-auto mt-2">
