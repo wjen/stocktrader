@@ -142,8 +142,8 @@ def history():
 def login():
     """Log user in"""
     db = SQL("sqlite:///finance.db")
-    # Forget any user_id, but maintain flashed message if present
 
+    # Forget any user_id
     session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
@@ -320,5 +320,27 @@ for code in default_exceptions:
 @app.route('/changepw', methods=["POST", "GET"])
 @login_required
 def changepw():
+    if request.method == "GET":
+        return render_template('changepw.html')
+    else:
+        db = SQL("sqlite:///finance.db")
+        cur_pw = request.form.get('cur_pw')
+        new_pw = request.form.get('new_pw')
+        confirm_pw = request.form.get('confirm_pw')
+        if not cur_pw:
+            return apology('You must enter your password', 403)
+        elif not new_pw:
+            return apology('You must enter a new password', 403)
+        elif not confirm_pw:
+            return apology('You must re-enter your password', 403)
+        elif new_pw != confirm_pq:
+            return apology('Passwords do not match')
 
-    return render_template('changepw.html')
+        user_list = db.execute("SELECT * FROM users WHERE id=:id", id=session['user_id'])
+        
+        if not check_password_hash(user_list[0]["hash"], cur_pw):
+            return apology("invalid current password", 403)
+
+
+        return render_template('changepw.html')
+        

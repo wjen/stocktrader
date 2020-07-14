@@ -37,19 +37,6 @@ body
     background-color: #fff;
 }
 
-/* forms  */
-form 
-{
-    /* Center the form on the page */
-    margin: 0 auto;
-    width: 400px;
-    /* Form outline */
-    padding: 1em;
-    border: 1px solid #CCC;
-    border-radius: 1em;
-}
-
-
 main
 {
     /* scroll horizontally as needed */
@@ -65,7 +52,20 @@ main img
     max-width: 100%;
 }
 
-.quotes
+/* forms  */
+form 
 {
-    text-align: center;
+    /* Center the form on the page */
+    margin: 0 auto;
+    width: 400px;
+    /* Form outline */
+    padding: 1em;
+    border: 1px solid #CCC;
+    border-radius: 1em;
+}
+
+form label
+{
+    display: block;
+    text-align: left;
 }
