@@ -5,12 +5,29 @@ Get Quote
 {% endblock %}
 
 {% block main %}
-<form action="/quote" method="post">
-    <div class="form-group">
-        <label for="symbol">Stock Symbol:</label>
-        <input type="text" id="symbol" name="symbol" class="form-control" placeholder="e.g. FB">
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label for="symbol">
+                <h1 class="text-light">Stock Symbol</h1>
+            </label>
+        </div>
     </div>
-    <button type="submit" class='btn btn-primary btn-outline-light btn-lg btn-block'>Look up symbol</button>
-</form>
+    <div class="row">
+        <div class="col-sm-10 col-lg-6 mx-auto">
+            <form action="/quote" method="post" class='form form-noborder'>
+                <div class="input-group mb-3 text-center">
+                    <input type="text" class="form-control form-control-lg" name="symbol" id="symbol"
+                        placeholder="e.g. FB">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary btn-outline-light btn-lg rounded-right"> Look up
+                            symbol
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

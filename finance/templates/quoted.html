@@ -9,7 +9,7 @@ Stock Quote
 
     <div class="row">
         {% for value in stock_info %}
-        <div class="col-xs-12, col-sm-12, col-md-4"><b>{{value.capitalize()}}</b>: {{stock_info[value]}}</div>
+        <div class="col-sm-4 text-light"><b>{{value.capitalize()}}</b>: {{stock_info[value]}}</div>
         {% endfor %}
     </div>
 </div>
