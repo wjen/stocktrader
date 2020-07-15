@@ -5,11 +5,27 @@ Deposit Funds
 {% endblock %}
 
 {% block main %}
-<form action="/deposit" method="post">
-    <div class="form-group">
-        <label for="add_funds"> Add Funds</label>
-        <input type="number" class="form-control" name="add_funds">
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label for="add_funds">
+                <h1 class="text-light">Deposit Funds</h1>
+            </label>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary btn-block"> Add Funds </button>
-</form>
+    <div class="row">
+        <div class="col-sm-10 col-lg-6 mx-auto">
+            <form action="/deposit" method="post" class='form form-noborder'>
+                <div class="input-group mb-3 text-center">
+                    <input type="number" class="form-control form-control-lg rounded-left" name="add_funds"
+                        id="add_funds" placeholder="Enter Amount">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary btn-outline-light btn-lg rounded-right"> Add Funds
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

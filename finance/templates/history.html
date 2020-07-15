@@ -24,7 +24,7 @@ Transaction History
         </thead>
         {% for row in history_list %}
         {% if row['shares'] < 0 %}
-        <tr class="table-danger">
+        <tr class="table-danger table-history">
             <td name="symbol" class="danger">{{ row['symbol'] }}</td>
             <td name="symbol" class="danger">{{ row['name'] }}</td>
             <td name="shares" class="danger">{{ row['shares'] }}</td>
@@ -32,7 +32,7 @@ Transaction History
             <td name="price" class="danger">{{ row['datetime_text'] }}</td>
         </tr>
         {% else %}
-        <tr class="table-success">
+        <tr class="table-success table-history">
             <td name="symbol" class="success">{{ row['symbol'] }}</td>
             <td name="symbol" class="success">{{ row['name'] }}</td>
             <td name="shares" class="success">{{ row['shares'] }}</td>

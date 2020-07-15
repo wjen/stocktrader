@@ -15,6 +15,11 @@
     <link href="/static/favicon.ico" rel="icon">
 
     <link href="/static/styles.css" rel="stylesheet">
+    <link href="/static/custom.css" rel="stylesheet">
+
+    <!-- google fonts api -->
+    <link href="https://fonts.googleapis.com/css2?family=Muli:ital@1&family=Roboto:ital,wght@1,100&display=swap"
+        rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
@@ -26,9 +31,8 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-light bg-light border">
-        <a class="navbar-brand" href="/"><span class="blue">C</span><span class="red">$</span><span
-                class="yellow">5</span><span class="green">0</span> <span class="red">Finance</span></a>
+    <nav class="navbar navbar-expand-md navbar-dark">
+        <a class="navbar-brand mt-1 mr-3" href="/"><span class="brand">StockTrader</span></a>
         <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
             data-target="#navbar" data-toggle="collapse" type="button">
             <span class="navbar-toggler-icon"></span>
@@ -66,13 +70,13 @@
 
     {% if get_flashed_messages() %}
     <header>
-        <div class="alert alert-primary border text-center" role="alert">
+        <div class="alert alert-info border border-light text-center" role="alert">
             {{ get_flashed_messages() | join(" ") }}
         </div>
     </header>
     {% endif %}
 
-    <main class="container p-5">
+    <main class="container p-5 alpha">
         {% block main %}{% endblock %}
     </main>
 
