@@ -23,6 +23,12 @@ a {
     color: $brand-secondary;
 }
 /* Main */
+.cover {
+    height: 100vh;
+    width: 100%;
+    background: no-repeat url('stock.jpg');
+
+}
 
 body 
 {
@@ -43,8 +49,6 @@ main
 
     /* center contents */
     text-align: center;
-
-
 }
 
 main img

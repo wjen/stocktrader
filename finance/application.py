@@ -147,7 +147,7 @@ def login():
 
     # Forget any user_id
     session.clear()
-
+    home_index = "home_index"
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
@@ -176,7 +176,7 @@ def login():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
-        return render_template("login.html")
+        return render_template("login.html", home_index=home_index)
 
 
 @app.route("/logout")
@@ -266,8 +266,12 @@ def sell():
             return apology("Invalid symbol")
         
         # Get the number of shares inputted by user
-        shares_to_sell = int(request.form.get('shares'))
-        if not shares_to_sell or shares_to_sell <= 0:
+        shares = request.form.get('shares')
+        if not shares:
+            return apology('Need to enter a number of shares')
+
+        shares_to_sell = int(shares)
+        if shares_to_sell <= 0:
             return apology('Need to enter valid number of shares')
 
         # Check to see if user has the stock in portfolio and enough shares to sell
