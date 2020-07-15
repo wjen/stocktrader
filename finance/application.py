@@ -76,8 +76,11 @@ def buy():
         symbol = request.form.get('symbol').upper()
         if not symbol:
             return apology('You must provide a stock symbol')
+        shares = request.form.get('shares')
+        if not shares:
+            return apology('You must provide a valid number of shares')
         shares_to_buy = int(request.form.get('shares'))
-        if not shares_to_buy or shares_to_buy <= 0:
+        if shares_to_buy <= 0:
             return apology('You must provide a valid number of shares')
         quote = lookup(symbol)
         if quote == None:
