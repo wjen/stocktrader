@@ -150,7 +150,10 @@ def login():
 
     # Forget any user_id
     session.clear()
+
+    # Passes in the image for background only on register and login
     home_index = "home_index"
+    
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
@@ -216,9 +219,11 @@ def register():
     
     session.clear()
     db = SQL("sqlite:///finance.db")
+    # Passes in the image for background only on register and login
+    home_index = "home_index"
 
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template("register.html", home_index=home_index)
     else:
         username = request.form.get("username")
         if not username:
