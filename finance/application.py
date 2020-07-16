@@ -134,12 +134,12 @@ def history():
     else:
         message = ''
 
-    # lookup name of symbo and add to list
-    for row in history_list:
-        quote = lookup(row['symbol'])
-        if quote == None:
-            return apology('Invalid stock symbol in history')
-        row['name'] = quote['name']
+    # # lookup name of symbol and add to list
+    # for row in history_list:
+    #     quote = lookup(row['symbol'])
+    #     if quote == None:
+    #         return apology('Invalid stock symbol in history')
+    #     row['name'] = quote['name']
     return render_template('history.html', history_list = history_list, message=message)
 
 

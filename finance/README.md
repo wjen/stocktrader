@@ -17,7 +17,7 @@ Stock Trading App that allows you to look up stocks, buy, sell, and logs your tr
 - JQuery
 - Bootstrap4
 
-<img src="./static/stocktrader.gif" width="100%">
+<img src="https://media.giphy.com/media/MFgzOd11g16wrHC5ZI/giphy.gif" width="80%">
 
 ### Configuring
 Before getting started, you'll need to register for an API key in order to be able to query IEX’s data. To do so, follow these steps:

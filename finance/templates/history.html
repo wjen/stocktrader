@@ -16,7 +16,6 @@ Transaction History
         <thead>
             <tr>
                 <th>Stock Symbol</th>
-                <th>Name</th>
                 <th>Shares Bought/Sold</th>
                 <th>Stock Price At Transaction</th>
                 <th>Time Of Transaction</th>
@@ -26,7 +25,6 @@ Transaction History
         {% if row['shares'] < 0 %}
         <tr class="table-danger table-history">
             <td name="symbol" class="danger">{{ row['symbol'] }}</td>
-            <td name="symbol" class="danger">{{ row['name'] }}</td>
             <td name="shares" class="danger">{{ row['shares'] }}</td>
             <td name="price" class="danger">{{ "%0.2f"|format(row['price']|float) }}</td>
             <td name="price" class="danger">{{ row['datetime_text'] }}</td>
@@ -34,7 +32,6 @@ Transaction History
         {% else %}
         <tr class="table-success table-history">
             <td name="symbol" class="success">{{ row['symbol'] }}</td>
-            <td name="symbol" class="success">{{ row['name'] }}</td>
             <td name="shares" class="success">{{ row['shares'] }}</td>
             <td name="price" class="success">{{ "%0.2f"|format(row['price']|float) }}</td>
             <td name="price" class="success">{{ row['datetime_text'] }}</td>
