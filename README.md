@@ -36,6 +36,8 @@ where value is that (pasted) value, without any space immediately before or afte
 
 ### Quickstart
 ```
-cd finance
+cd stocktrader
 flask run 
 ```
+### License
+MIT 
